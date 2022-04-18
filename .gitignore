@@ -20,3 +20,4 @@
 *.user
 *.db-wal
 simple_vector/.vs/simple_vector/v16/.suo
+*.json
