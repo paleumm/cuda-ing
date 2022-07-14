@@ -1,5 +1,7 @@
 # cuda-ing
- 
+
+This repository is for my **CUDA** learning.
+
 ## Compiler
 ```
 nvcc: NVIDIA (R) Cuda compiler driver
