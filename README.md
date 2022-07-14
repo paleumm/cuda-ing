@@ -1,2 +1,2 @@
-# cuda-core-programming
+# cuda-ing
  
