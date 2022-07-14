@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <cuda.h>
 
-__global__ void add_mat_kernel(float *a, float *b, float *c, int n){
+__global__ void add_mat_kernel_0(float *a, float *b, float *c, int n){
     int col = blockIdx.x * blockDim.x + threadIdx.x;
     int row = blockIdx.y * blockDim.y + threadIdx.y;
     int output_index = row * n + col;
@@ -28,7 +28,30 @@ __global__ void add_mat_kernel(float *a, float *b, float *c, int n){
     }
 }
 
-__host__ void add_matrix(float *h_out, float *h_first, float *h_second, int n){
+__global__ void add_mat_kernel_1(float *a, float *b, float *c, int n){
+    int index = blockIdx.x * blockDim.x + threadIdx.x;
+    if(index < n*n) c[index] = a[index] + b[index]; 
+}
+
+// __global__ void add_mat_kernel_2(float *a, float *b, float *c, int n){
+//     int index = blockIdx.x * blockDim.x + threadIdx.x;
+//     if(index < n)
+//         for (size_t i = 0; i < n; ++i)
+//             c[index+i] = a[index+i] + b[index+i];
+// }
+
+
+/*
+ * =====================================================================================
+ *
+ *       Function:  add_matrix
+ *    Description:  
+ *     Parameters:  n[dimension of square matrix], mode[0:normal, 1:thread->element,
+ *                  2:thread->row, 3:thread:col]
+ *
+ * =====================================================================================
+ */
+__host__ void add_matrix(float *h_out, float *h_first, float *h_second, int n, int mode){
     // size of matrix
     int size = n * n * sizeof(float);
     float *d_first, *d_second, *d_out;
@@ -53,7 +76,20 @@ __host__ void add_matrix(float *h_out, float *h_first, float *h_second, int n){
        exit(EXIT_FAILURE);
     }
 
-    add_mat_kernel<<<ceil(n/256.0),256>>>(d_first, d_second, d_out, n);
+    switch (mode)
+    {
+    case 1:
+        add_mat_kernel_1<<<ceil(n/64.0),64>>>(d_first, d_second, d_out, n);
+        break;
+    case 2:
+        // add_mat_kernel_2<<<ceil(n/64.0),64>>>(d_first, d_second, d_out, n);
+        break;
+    case 3:
+        break;
+    default:
+        add_mat_kernel_0<<<ceil(n/64.0),64>>>(d_first, d_second, d_out, n);
+        break;
+    }
 
     cudaMemcpy(h_out, d_out, size, cudaMemcpyDeviceToHost);
 
@@ -64,8 +100,13 @@ __host__ void add_matrix(float *h_out, float *h_first, float *h_second, int n){
 int main(int argc, char* argv[]){
     // code section
     int n = strtol(argv[1], NULL, 10);
+    unsigned short mode = strtol(argv[2], NULL, 10);
+
+    if(mode > 3){printf("mode should be 0-3\n");return 1;}
 
     int size = n*n;
+
+    // initialize matrix
     float A[size], B[size], C[size];
     for (size_t i = 0; i < size; i++)
     {
@@ -74,10 +115,10 @@ int main(int argc, char* argv[]){
     }
     //for (int i = 0; i < size; i++) printf("A[%d] = %f, B[%d]=%f\n",i,A[i],i,B[i]);
     
-    add_matrix(C, A, B, n);
+    add_matrix(C, A, B, n, mode);
     for (size_t i = 0; i < size; i++)
     {
-        printf("%f + %f = %f\n", A[i], B[i], C[i]);
+        printf("%.0f + %.0f = %.0f\n", A[i], B[i], C[i]);
     }
     return 0;
 }
