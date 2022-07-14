@@ -1,0 +1,36 @@
+{
+    "c-cuda": {
+        "prefix": "cuda_init",
+        "body": [
+            "/*",
+            " * =====================================================================================",
+            " *",
+            " *       Filename:  $TM_FILENAME",
+            " *    Description:  $1",
+            " *",
+            " *        Version:  1.0",
+            " *        Created:  ${CURRENT_DATE}/${CURRENT_MONTH}/${CURRENT_YEAR} ${CURRENT_HOUR}:${CURRENT_MINUTE}:${CURRENT_SECOND}",
+            " *       Revision:  none",
+            " *       Compiler:  nvcc",
+            " *",
+            " *         Author:  Your Name",
+            " *        Company:  none",
+            " *",
+            " * =====================================================================================",
+            " */",
+            "",
+            "#include <stdio.h>",
+            "#include <stdlib.h>",
+            "#include <cuda.h>",
+            "",
+            "__global__ void func(void);",
+            "",
+            "int main(int argc, char* argv[]){",
+            "    // code section",
+            "    $2",
+            "",
+            "    return 0;",
+            "}"
+        ]
+    }
+}
