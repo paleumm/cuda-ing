@@ -117,8 +117,9 @@ int main(int argc, char* argv[]){
 
     if(mode > 3){printf("mode should be 0-3\n");return 1;}
 
-    //int size = n*n;
-    int size = 1024;
+    int size = n*n;
+    //int size = 1024;
+    
     // initialize matrix
     float A[size], B[size], C[size];
     for (size_t i = 0; i < size; i++)
