@@ -20,14 +20,14 @@
 #include <cuda.h>
 
 __global__ void mul_mat_vec_kernel(float *a, float *b, float *c, int n){
-    int col = blockIdx.x * blockDim.x + threadIdx.x;
-    int row = blockIdx.y * blockDim.y + threadIdx.y;
-    //if(col < n && row < n){
-        float sum = 0;
+    int index = blockIdx.x * blockDim.x + threadIdx.x;
+    if (index < n){
+        float sum = 0.0f;
         for (size_t i = 0; i < n; i++)
-            sum += b[row * n + i]*c[i];
-        a[col] = sum;
-    //}
+            sum += b[index*n + i] * c[i];
+        a[index] = sum;
+        
+    }
 }
 
 __host__ void mul_mat_vec(float *h_out, float *h_mat, float *h_vec, int n){
