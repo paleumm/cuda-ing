@@ -33,6 +33,16 @@
             "}"
         ]
     },
+    "cudaMalloc": {
+        "prefix": "mallocCuda",
+        "body": [
+            "cudaError_t $1 = cudaMalloc($2, $3);",
+            "if($1 != cudaSuccess){",
+            "   printf(\"%s in %s at line %d\\n\",cudaGetErrorString($1), __FILE__, __LINE__);",
+            "   exit(EXIT_FAILURE);",
+            "}"
+        ]
+    },
     "c-func": {
         "prefix": "func-cmt",
         "body": [
