@@ -74,15 +74,15 @@ int main(int argc, char* argv[]){
     
     // initialize matrix
     float A[n], B[size], C[n];
-    //float B[] = {4,5,6,7,1,2,3,4,4,5,6,7,1,2,3,4};
+    printf("Matrix : ");
     for (size_t i = 0; i < size; i++){
         B[i] = i % 8;
         if(i%n==0) printf("\n");
         printf("%.0f ",B[i]);
     }
     printf("\n");
-    printf("\n");
     
+    printf("Vector : ");
     for (size_t i = 0; i < n; i++){
         C[i] = i % 8;
         printf("%.0f ",C[i]);
@@ -92,6 +92,7 @@ int main(int argc, char* argv[]){
 
     mul_mat_vec(A, B, C, n);
 
+    printf("Output = ");
     for( int i = 0; i < n ;i++){
         printf("%.0f ",A[i]);
     }
