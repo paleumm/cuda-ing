@@ -67,7 +67,8 @@ __host__ void mul_mat_vec(float *h_out, float *h_mat, float *h_vec, int n){
 }
 
 int main(int argc, char* argv[]){
-    // code section
+
+    // executable parameter
     int n = strtol(argv[1], NULL, 10);
 
     int size = n*n;
