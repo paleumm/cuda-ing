@@ -2,6 +2,17 @@
 
 This repository is for my **CUDA** learning.
 
+### To run code
+
+Some of code in this repo require executable parameter input.
+```bash
+nvcc cuda_hello.cu -o cuda_hello
+./cuda_hello
+#or
+nvcc mul_matrix_vector.cu
+./a.out 10
+```
+
 ### Compiler
 ```
 nvcc: NVIDIA (R) Cuda compiler driver

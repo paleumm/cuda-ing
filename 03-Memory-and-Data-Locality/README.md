@@ -10,6 +10,16 @@ If our global memory bandwidth is 100GB/s, it can perform 250GFLOPS. When our ke
 
 To maximize our kernel performance, we need to increase our ratio by reducing the number of global memory access.
 
+## CUDA Memory Types
+
+> For **host** can access (R/W) `Global Memory` and `Constant Memory`
+
+- `Global Memory` can be read and written by `device`.
+- `Constant Memory` is **Read-Only** access by `device`, its has short-latency and high-bandwidth. `__device__ __constant__`
+- `Registers Memory` (high-speed, higly parallel) are allocated to individual threads, thread cannot access other's register.
+- `Shared Memory` (high-speed, higly parallel) are allocated to thread blocks. Can access throughout each thread block. `__shared__`
+
+
 ## Matrix Multiplication
 
 `mat_mul.cu` 

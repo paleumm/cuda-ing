@@ -77,7 +77,7 @@ int main(int argc, char* argv[]){
     float A[n], B[size], C[n];
     printf("Matrix : ");
     for (size_t i = 0; i < size; i++){
-        B[i] = i % 8;
+        B[i] = i;
         if(i%n==0) printf("\n");
         printf("%.0f ",B[i]);
     }
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]){
     
     printf("Vector : ");
     for (size_t i = 0; i < n; i++){
-        C[i] = i % 8;
+        C[i] = i;
         printf("%.0f ",C[i]);
     }
     printf("\n");
