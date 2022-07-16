@@ -2,13 +2,6 @@
 
 This repository is for my **CUDA** learning.
 
-### Structure
-
-- [Basic](https://github.com/paleumm/cuda-ing/tree/main/Basic)
-- [Data-Parallel-Computing](https://github.com/paleumm/cuda-ing/tree/main/Data-Parallel-Computing)
-- [Scalable-Parallel-Execution](https://github.com/paleumm/cuda-ing/tree/main/Scalable-Parallel-Execution)
-- [Memory-and-Data-Locality](https://github.com/paleumm/cuda-ing/tree/main/Memory-and-Data-Locality)
-
 ### Compiler
 ```
 nvcc: NVIDIA (R) Cuda compiler driver
