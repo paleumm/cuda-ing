@@ -19,7 +19,7 @@
 #include <stdlib.h>
 #include <cuda.h>
 
-#define TILE_WIDTH 16
+#define TILE_WIDTH 32
 
 // Low performance Matrix Multiplication
 __global__ void mat_mul_kernel(float *M, float *N, float *P, int width){
@@ -27,7 +27,7 @@ __global__ void mat_mul_kernel(float *M, float *N, float *P, int width){
     int col = blockIdx.x * blockDim.x + threadIdx.x;
 
     if((row < width) && (col < width)){
-        int Pval = 0;
+        float Pval = 0;
 
         // each iteration performed 2 global mem access and 1 add and mul.
         for (int k = 0; k < width; k++)
@@ -72,7 +72,7 @@ __global__ void mat_mul_tiles(float *d_M, float *d_N, float *d_P, int width){
     if((row < width) && (col < width)) d_P[row*width + col] = Pval;
 }
 
-__host__ void mul_mat_vec(float *h_out, float *h_mat, float *h_vec, int n){
+__host__ void mul_mat(float *h_out, float *h_mat1, float *h_mat2, int n){
     // size of matrix
     int mat_sz = n * n * sizeof(float);
     float *d_first, *d_second, *d_out;
@@ -82,14 +82,14 @@ __host__ void mul_mat_vec(float *h_out, float *h_mat, float *h_vec, int n){
        printf("%s in %s at line %d\n",cudaGetErrorString(errFirst), __FILE__, __LINE__);
        exit(EXIT_FAILURE);
     }
-    cudaMemcpy(d_first, h_mat, mat_sz, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_first, h_mat1, mat_sz, cudaMemcpyHostToDevice);
 
     cudaError_t errSecond = cudaMalloc((void**)&d_second, mat_sz);
     if(errSecond != cudaSuccess){
        printf("%s in %s at line %d\n",cudaGetErrorString(errSecond), __FILE__, __LINE__);
        exit(EXIT_FAILURE);
     }
-    cudaMemcpy(d_second, h_vec, mat_sz, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_second, h_mat2, mat_sz, cudaMemcpyHostToDevice);
 
     cudaError_t errOut = cudaMalloc((void**)&d_out, mat_sz);  
     if(errOut != cudaSuccess){
@@ -97,15 +97,16 @@ __host__ void mul_mat_vec(float *h_out, float *h_mat, float *h_vec, int n){
        exit(EXIT_FAILURE);
     }
 
-    dim3 dimGrid(1,1,1);
-    dim3 dimBlock(n,n,1);
-    //mat_mul_kernel<<<dimGrid, dimBlock>>>(d_first, d_second, d_out, n);
+    dim3 dimBlock(TILE_WIDTH , TILE_WIDTH);
+    dim3 dimGrid(ceil(n/float(dimBlock.x)), ceil(n/float(dimBlock.y)));
     mat_mul_tiles<<<dimGrid, dimBlock>>>(d_first, d_second, d_out, n);
     cudaMemcpy(h_out, d_out, mat_sz, cudaMemcpyDeviceToHost);
 
     cudaFree(d_first); cudaFree(d_second); cudaFree(d_out);
 
 }
+
+
 
 int main(int argc, char* argv[]){
     // code section
@@ -118,23 +119,26 @@ int main(int argc, char* argv[]){
     float A[size], B[size], C[size];
     
     for (size_t i = 0; i < size; i++){
-        B[i] = 4;
-        C[i] = 4;
-        if(i%n==0) printf("\n");
-        printf("%.0f ",B[i]);
+        B[i] = (i%n)+1;
+        C[i] = (i%n)+1;
+        //B[i] = 1;
+        //C[i] = 1;
+        //if(i%n==0) printf("\n");
+        //printf("%.0f ",B[i]);
     }
     printf("\n");
     
-   
-
-    mul_mat_vec(A, B, C, n);
-
-    printf("Output = ");
-    for( int i = 0; i < size ;i++){
-        if(i%n==0) printf("\n");
-        printf("%.0f ",A[i]);
+    for(int i = 0 ; i < 100; i++){
+        mul_mat(A, B, C, n);
     }
-    printf("\n");
+    //mul_mat(A, B, C, n);
+
+    // printf("Output = ");
+    // for( int i = 0; i < size ;i++){
+    //     if(i%n==0) printf("\n");
+    //     printf("%.0f ",A[i]);
+    // }
+    // printf("\n");
 
     return 0;
 }

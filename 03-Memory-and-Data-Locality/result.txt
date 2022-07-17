@@ -1,0 +1,19 @@
+cuda
+cuda-100-iteration
+    real    0m0.222s
+    user    0m0.043s
+    sys     0m0.157s
+cuda-1-iteration
+    real    0m0.101s
+    user    0m0.008s
+    sys     0m0.067s
+
+cpu
+cpu-100-iteration
+    real    0m40.297s
+    user    0m40.244s
+    sys     0m0.012s
+cpu-1-iteration
+    real    0m0.405s
+    user    0m0.403s
+    sys     0m0.000s
