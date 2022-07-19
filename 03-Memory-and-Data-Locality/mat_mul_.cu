@@ -1,11 +1,11 @@
 /*
  * =====================================================================================
  *
- *       Filename:  mat_mul.cu
- *    Description:  matrix multiplication
+ *       Filename:  mat_mul_.cu
+ *    Description:  matrix multiplication with any dimension
  *
  *        Version:  1.0
- *        Created:  16/07/2022 19:13:52
+ *        Created:  17/07/2022 19:50:57
  *       Revision:  none
  *       Compiler:  nvcc
  *
@@ -19,24 +19,7 @@
 #include <stdlib.h>
 #include <cuda.h>
 
-#define TILE_WIDTH 32
-
-// Low performance Matrix Multiplication
-__global__ void mat_mul_kernel(float *M, float *N, float *P, int width){
-    int row = blockIdx.y * blockDim.y + threadIdx.y;
-    int col = blockIdx.x * blockDim.x + threadIdx.x;
-
-    if((row < width) && (col < width)){
-        float Pval = 0;
-
-        // each iteration performed 2 global mem access and 1 add and mul.
-        for (int k = 0; k < width; k++)
-            Pval += M[row * width + k] * N[k * width + col];
-
-        // write the Pval to index if output matrix
-        P[row * width + col] = Pval;
-    }
-}
+#define TILE_WIDTH 16
 
 __global__ void mat_mul_tiles(float *d_M, float *d_N, float *d_P, int width){
 
@@ -106,38 +89,9 @@ __host__ void mul_mat(float *h_out, float *h_mat1, float *h_mat2, int n){
 
 }
 
-
-
 int main(int argc, char* argv[]){
     // code section
-    // executable parameter
-    int n = strtol(argv[1], NULL, 10);
+    
 
-    int size = n*n;
-    
-    // initialize matrix
-    float A[size], B[size], C[size];
-    
-    for (size_t i = 0; i < size; i++){
-        B[i] = (i%n)+1;
-        C[i] = (i%n)+1;
-        //B[i] = 1;
-        //C[i] = 1;
-        //if(i%n==0) printf("\n");
-        //printf("%.0f ",B[i]);
-    }
-    printf("\n");
-    
-    for(int i = 0 ; i < 100; i++){
-        mul_mat(A, B, C, n);
-    }
-    //mul_mat(A, B, C, n);
-
-    // printf("Output = ");
-    // for( int i = 0; i < size ;i++){
-    //     if(i%n==0) printf("\n");
-    //     printf("%.0f ",A[i]);
-    // }
-    // printf("\n");
     return 0;
 }
